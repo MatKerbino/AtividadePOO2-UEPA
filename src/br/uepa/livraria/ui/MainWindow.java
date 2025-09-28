@@ -29,7 +29,7 @@ public class MainWindow extends JFrame {
         setupEventHandlers();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Sistema de Gerenciamento de Livraria");
-        setSize(1000, 700);
+        setSize(1200, 800);
         setLocationRelativeTo(null);
         setResizable(true);
     }

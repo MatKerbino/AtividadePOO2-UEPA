@@ -50,27 +50,41 @@ public class ClientePanel extends JPanel {
      
     private void initializeComponents() {
          
-        nomeField = new JTextField(20);
-        enderecoField = new JTextField(20);
-        telefoneField = new JTextField(15);
-        emailField = new JTextField(20);
-        cpfField = new JTextField(15);
-        cnpjField = new JTextField(15);
-        razaoSocialField = new JTextField(20);
+        nomeField = new JTextField(25);
+        nomeField.setPreferredSize(new Dimension(300, 30));
+        enderecoField = new JTextField(25);
+        enderecoField.setPreferredSize(new Dimension(300, 30));
+        telefoneField = new JTextField(20);
+        telefoneField.setPreferredSize(new Dimension(200, 30));
+        emailField = new JTextField(25);
+        emailField.setPreferredSize(new Dimension(300, 30));
+        cpfField = new JTextField(20);
+        cpfField.setPreferredSize(new Dimension(200, 30));
+        cnpjField = new JTextField(20);
+        cnpjField.setPreferredSize(new Dimension(200, 30));
+        razaoSocialField = new JTextField(25);
+        razaoSocialField.setPreferredSize(new Dimension(300, 30));
         
          
         tipoClienteCombo = new JComboBox<>(new String[]{"Pessoa Física", "Pessoa Jurídica"});
+        tipoClienteCombo.setPreferredSize(new Dimension(200, 30));
         tipoClienteCombo.addActionListener(e -> toggleCamposEspecificos());
         
          
         btnInserir = new JButton("Inserir");
+        btnInserir.setPreferredSize(new Dimension(100, 35));
         btnAtualizar = new JButton("Atualizar");
+        btnAtualizar.setPreferredSize(new Dimension(100, 35));
         btnExcluir = new JButton("Excluir");
+        btnExcluir.setPreferredSize(new Dimension(100, 35));
         btnLimpar = new JButton("Limpar");
+        btnLimpar.setPreferredSize(new Dimension(100, 35));
         btnBuscar = new JButton("Buscar");
+        btnBuscar.setPreferredSize(new Dimension(100, 35));
         
          
-        buscarField = new JTextField(15);
+        buscarField = new JTextField(20);
+        buscarField.setPreferredSize(new Dimension(250, 30));
         
          
         String[] colunas = {"ID", "Nome", "Tipo", "CPF/CNPJ", "Telefone", "Email"};
@@ -102,7 +116,7 @@ public class ClientePanel extends JPanel {
         
          
         JScrollPane scrollPane = new JScrollPane(clienteTable);
-        scrollPane.setPreferredSize(new Dimension(800, 300));
+        scrollPane.setPreferredSize(new Dimension(1000, 350));
         
          
         JPanel searchPanel = createSearchPanel();
@@ -200,18 +214,21 @@ public class ClientePanel extends JPanel {
     private void toggleCamposEspecificos() {
         boolean isPessoaFisica = tipoClienteCombo.getSelectedItem().equals("Pessoa Física");
         
+        // Esconder/mostrar campos específicos
         cpfField.setVisible(isPessoaFisica);
         cnpjField.setVisible(!isPessoaFisica);
         razaoSocialField.setVisible(!isPessoaFisica);
         
-         
+        // Esconder/mostrar labels correspondentes
         if (cpfField.getParent() != null) {
             Component[] components = ((JPanel) cpfField.getParent()).getComponents();
             for (Component comp : components) {
                 if (comp instanceof JLabel) {
                     JLabel label = (JLabel) comp;
-                    if (label.getText().equals("CPF:") || label.getText().equals("CNPJ:")) {
+                    if (label.getText().equals("CPF:")) {
                         label.setVisible(isPessoaFisica);
+                    } else if (label.getText().equals("CNPJ:")) {
+                        label.setVisible(!isPessoaFisica);
                     } else if (label.getText().equals("Razão Social:")) {
                         label.setVisible(!isPessoaFisica);
                     }
@@ -448,6 +465,29 @@ public class ClientePanel extends JPanel {
             
             tableModel.addRow(row);
         }
+        
+        // Aplicar cores diferentes para cada tipo de cliente
+        clienteTable.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                
+                if (!isSelected) {
+                    String tipoCliente = (String) table.getValueAt(row, 2);
+                    if ("Pessoa Física".equals(tipoCliente)) {
+                        c.setBackground(new Color(173, 216, 230)); // Azul claro
+                    } else if ("Pessoa Jurídica".equals(tipoCliente)) {
+                        c.setBackground(new Color(144, 238, 144)); // Verde claro
+                    } else {
+                        c.setBackground(Color.WHITE);
+                    }
+                } else {
+                    c.setBackground(table.getSelectionBackground());
+                }
+                
+                return c;
+            }
+        });
     }
     
      

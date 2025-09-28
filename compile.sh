@@ -17,7 +17,7 @@ mkdir -p classes
 
 # Compila todos os arquivos Java
 echo "Compilando arquivos Java..."
-javac -cp ".:mysql-connector-j-9.3.0.jar" -d classes src/br/uepa/livraria *.java
+javac -cp ".:mysql-connector-j-9.3.0.jar" -d classes $(find src/br/uepa/livraria -name "*.java")
 
 if [ $? -eq 0 ]; then
     echo "Compilação concluída com sucesso!"
@@ -26,6 +26,16 @@ if [ $? -eq 0 ]; then
     echo "java -cp \"classes:mysql-connector-j-9.3.0.jar\" br.uepa.livraria.application.Main"
     echo ""
     echo "Ou execute: ./run.sh"
+    echo ""
+    echo "Deseja criar o banco de dados e tabelas? (schema.sql)"
+    read -p "Digite o usuário do MySQL (ex: root): " MYSQL_USER
+    echo "Será solicitado a senha do MySQL."
+    mysql -u "$MYSQL_USER" -p < schema.sql
+    if [ $? -eq 0 ]; then
+        echo "Banco de dados criado/configurado com sucesso!"
+    else
+        echo "ERRO ao executar o schema.sql! Verifique usuário, senha e permissões."
+    fi
 else
     echo "ERRO: Falha na compilação!"
     exit 1

@@ -51,32 +51,45 @@ public class LivroPanel extends JPanel {
      
     private void initializeComponents() {
          
-        isbnField = new JTextField(15);
-        tituloAutorField = new JTextField(25);
-        generoField = new JTextField(15);
-        anoPublicacaoField = new JTextField(10);
-        precoField = new JTextField(10);
-        estoqueField = new JTextField(10);
+        isbnField = new JTextField(20);
+        isbnField.setPreferredSize(new Dimension(250, 35));
+        tituloAutorField = new JTextField(30);
+        tituloAutorField.setPreferredSize(new Dimension(400, 35));
+        generoField = new JTextField(20);
+        generoField.setPreferredSize(new Dimension(200, 35));
+        anoPublicacaoField = new JTextField(15);
+        anoPublicacaoField.setPreferredSize(new Dimension(150, 35));
+        precoField = new JTextField(15);
+        precoField.setPreferredSize(new Dimension(150, 35));
+        estoqueField = new JTextField(15);
+        estoqueField.setPreferredSize(new Dimension(150, 35));
         
          
         editoraCombo = new JComboBox<>();
-        editoraCombo.setPreferredSize(new Dimension(200, 25));
+        editoraCombo.setPreferredSize(new Dimension(300, 35));
         
          
         String[] generos = {"Ficção", "Romance", "Mistério", "Fantasia", "Ficção Científica", 
                            "Biografia", "História", "Autoajuda", "Técnico", "Infantil", "Outros"};
         generoCombo = new JComboBox<>(generos);
         generoCombo.setEditable(true);
+        generoCombo.setPreferredSize(new Dimension(200, 35));
         
          
         btnInserir = new JButton("Inserir");
+        btnInserir.setPreferredSize(new Dimension(100, 40));
         btnAtualizar = new JButton("Atualizar");
+        btnAtualizar.setPreferredSize(new Dimension(100, 40));
         btnExcluir = new JButton("Excluir");
+        btnExcluir.setPreferredSize(new Dimension(100, 40));
         btnLimpar = new JButton("Limpar");
+        btnLimpar.setPreferredSize(new Dimension(100, 40));
         btnBuscar = new JButton("Buscar");
+        btnBuscar.setPreferredSize(new Dimension(100, 40));
         
          
-        buscarField = new JTextField(15);
+        buscarField = new JTextField(20);
+        buscarField.setPreferredSize(new Dimension(250, 35));
         
          
         String[] colunas = {"ISBN", "Título/Autor", "Gênero", "Ano", "Preço", "Estoque", "Editora"};
@@ -108,7 +121,7 @@ public class LivroPanel extends JPanel {
         
          
         JScrollPane scrollPane = new JScrollPane(livroTable);
-        scrollPane.setPreferredSize(new Dimension(900, 300));
+        scrollPane.setPreferredSize(new Dimension(1200, 400));
         
          
         JPanel searchPanel = createSearchPanel();
@@ -204,6 +217,26 @@ public class LivroPanel extends JPanel {
             for (Editora editora : editoras) {
                 editoraCombo.addItem(editora);
             }
+            
+            // Configurar renderer customizado para mostrar apenas o nome da editora
+            editoraCombo.setRenderer(new javax.swing.ListCellRenderer<Editora>() {
+                @Override
+                public Component getListCellRendererComponent(JList<? extends Editora> list, Editora value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = new JLabel();
+                    if (value != null) {
+                        label.setText(value.getNome());
+                    }
+                    if (isSelected) {
+                        label.setBackground(list.getSelectionBackground());
+                        label.setForeground(list.getSelectionForeground());
+                    } else {
+                        label.setBackground(list.getBackground());
+                        label.setForeground(list.getForeground());
+                    }
+                    label.setOpaque(true);
+                    return label;
+                }
+            });
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao carregar editoras: " + e.getMessage(), 
                                         "Erro", JOptionPane.ERROR_MESSAGE);

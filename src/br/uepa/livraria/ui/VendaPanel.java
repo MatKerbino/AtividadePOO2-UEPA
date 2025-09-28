@@ -48,13 +48,14 @@ public class VendaPanel extends JPanel {
     
     private void initializeComponents() {
         clienteCombo = new JComboBox<>();
-        clienteCombo.setPreferredSize(new Dimension(300, 25));
+        clienteCombo.setPreferredSize(new Dimension(500, 35));
         
         livroCombo = new JComboBox<>();
-        livroCombo.setPreferredSize(new Dimension(300, 25));
+        livroCombo.setPreferredSize(new Dimension(500, 35));
         livroCombo.addActionListener(e -> atualizarPrecoUnitario());
         
-        quantidadeField = new JTextField(10);
+        quantidadeField = new JTextField(25);
+        quantidadeField.setPreferredSize(new Dimension(300, 35));
         quantidadeField.addActionListener(e -> calcularValorTotal());
         
         precoUnitarioLabel = new JLabel("R$ 0,00");
@@ -65,12 +66,16 @@ public class VendaPanel extends JPanel {
         valorTotalLabel.setForeground(Color.BLUE);
         
         btnInserir = new JButton("Registrar Venda");
-        btnInserir.setPreferredSize(new Dimension(150, 30));
+        btnInserir.setPreferredSize(new Dimension(200, 40));
         btnLimpar = new JButton("Limpar");
+        btnLimpar.setPreferredSize(new Dimension(120, 40));
         btnBuscar = new JButton("Buscar");
+        btnBuscar.setPreferredSize(new Dimension(120, 40));
         
-        buscarField = new JTextField(20);
+        buscarField = new JTextField(30);
+        buscarField.setPreferredSize(new Dimension(400, 35));
         tipoBuscaCombo = new JComboBox<>(new String[]{"Cliente", "Livro"});
+        tipoBuscaCombo.setPreferredSize(new Dimension(150, 35));
         
         String[] colunas = {"ID", "Cliente", "Livro", "Quantidade", "Preço Unit.", "Valor Total", "Data"};
         tableModel = new DefaultTableModel(colunas, 0) {
@@ -93,7 +98,7 @@ public class VendaPanel extends JPanel {
         JPanel formPanel = createFormPanel();
         
         JScrollPane scrollPane = new JScrollPane(vendaTable);
-        scrollPane.setPreferredSize(new Dimension(900, 300));
+        scrollPane.setPreferredSize(new Dimension(1200, 400));
         
         JPanel searchPanel = createSearchPanel();
         
@@ -106,19 +111,21 @@ public class VendaPanel extends JPanel {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Nova Venda"));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(8, 8, 8, 8);
         
+        // Primeira linha: Cliente e Livro
         gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.EAST;
         panel.add(new JLabel("Cliente:"), gbc);
-        gbc.gridx = 1; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 1; gbc.anchor = GridBagConstraints.WEST; gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.add(clienteCombo, gbc);
         
-        gbc.gridx = 2; gbc.anchor = GridBagConstraints.EAST;
+        gbc.gridx = 2; gbc.anchor = GridBagConstraints.EAST; gbc.fill = GridBagConstraints.NONE;
         panel.add(new JLabel("Livro:"), gbc);
-        gbc.gridx = 3; gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridx = 3; gbc.anchor = GridBagConstraints.WEST; gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.add(livroCombo, gbc);
         
-        gbc.gridx = 0; gbc.gridy = 1; gbc.anchor = GridBagConstraints.EAST;
+        // Segunda linha: Quantidade e Preço Unitário
+        gbc.gridx = 0; gbc.gridy = 1; gbc.anchor = GridBagConstraints.EAST; gbc.fill = GridBagConstraints.NONE;
         panel.add(new JLabel("Quantidade:"), gbc);
         gbc.gridx = 1; gbc.anchor = GridBagConstraints.WEST;
         panel.add(quantidadeField, gbc);
@@ -128,16 +135,18 @@ public class VendaPanel extends JPanel {
         gbc.gridx = 3; gbc.anchor = GridBagConstraints.WEST;
         panel.add(precoUnitarioLabel, gbc);
         
+        // Terceira linha: Valor Total
         gbc.gridx = 0; gbc.gridy = 2; gbc.anchor = GridBagConstraints.EAST;
         panel.add(new JLabel("Valor Total:"), gbc);
         gbc.gridx = 1; gbc.anchor = GridBagConstraints.WEST;
         panel.add(valorTotalLabel, gbc);
         
+        // Botões
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(btnInserir);
         buttonPanel.add(btnLimpar);
         
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 4; gbc.anchor = GridBagConstraints.CENTER;
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 4; gbc.anchor = GridBagConstraints.CENTER; gbc.fill = GridBagConstraints.NONE;
         panel.add(buttonPanel, gbc);
         
         return panel;
@@ -167,6 +176,26 @@ public class VendaPanel extends JPanel {
             for (Cliente cliente : clientes) {
                 clienteCombo.addItem(cliente);
             }
+            
+            // Configurar renderer customizado para mostrar apenas o nome
+            clienteCombo.setRenderer(new javax.swing.ListCellRenderer<Cliente>() {
+                @Override
+                public Component getListCellRendererComponent(JList<? extends Cliente> list, Cliente value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = new JLabel();
+                    if (value != null) {
+                        label.setText(value.getNome() + " (" + value.getTipoCliente() + ")");
+                    }
+                    if (isSelected) {
+                        label.setBackground(list.getSelectionBackground());
+                        label.setForeground(list.getSelectionForeground());
+                    } else {
+                        label.setBackground(list.getBackground());
+                        label.setForeground(list.getForeground());
+                    }
+                    label.setOpaque(true);
+                    return label;
+                }
+            });
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao carregar clientes: " + e.getMessage(), 
                                         "Erro", JOptionPane.ERROR_MESSAGE);
@@ -182,6 +211,26 @@ public class VendaPanel extends JPanel {
                     livroCombo.addItem(livro);
                 }
             }
+            
+            // Configurar renderer customizado para mostrar apenas o título/autor
+            livroCombo.setRenderer(new javax.swing.ListCellRenderer<Livro>() {
+                @Override
+                public Component getListCellRendererComponent(JList<? extends Livro> list, Livro value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = new JLabel();
+                    if (value != null) {
+                        label.setText(value.getTituloAutor() + " - R$ " + String.format("%.2f", value.getPreco()) + " (Estoque: " + value.getEstoque() + ")");
+                    }
+                    if (isSelected) {
+                        label.setBackground(list.getSelectionBackground());
+                        label.setForeground(list.getSelectionForeground());
+                    } else {
+                        label.setBackground(list.getBackground());
+                        label.setForeground(list.getForeground());
+                    }
+                    label.setOpaque(true);
+                    return label;
+                }
+            });
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao carregar livros: " + e.getMessage(), 
                                         "Erro", JOptionPane.ERROR_MESSAGE);
